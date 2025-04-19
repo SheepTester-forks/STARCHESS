@@ -1,6 +1,8 @@
 import time
 from typing import TYPE_CHECKING, Literal
-import ai_chessbot
+from . import ai_chessbot
+
+print(ai_chessbot)
 
 if TYPE_CHECKING:
     # module setup might be different on autograder
