@@ -1,9 +1,28 @@
 # /* Square.py
+from typing import Literal
 import pygame
+
+from data.classes.Piece import Piece
 
 
 # Tile creator
 class Square:
+    x: int
+    y: int
+    width: int
+    height: int
+    abs_x: int
+    abs_y: int
+    abs_pos: tuple[int, int]
+    pos: tuple[int, int]
+    color: Literal["light", "dark"]
+    draw_color: tuple[int, int, int]
+    highlight_color: tuple[int, int, int]
+    occupying_piece: Piece | None
+    coord: str
+    highlight: bool
+    rect: pygame.Rect
+
     def __init__(self, x, y, width, height):
         self.x = x
         self.y = y

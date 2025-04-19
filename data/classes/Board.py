@@ -1,3 +1,5 @@
+from typing import Literal
+from data.classes.Piece import Piece
 from data.classes.Square import Square
 from data.classes.pieces.Rook import Rook
 from data.classes.pieces.Bishop import Bishop
@@ -7,8 +9,20 @@ from data.classes.pieces.King import King
 from data.classes.pieces.Pawn import Pawn
 from data.classes.pieces.Star import Star
 
+
 # Game state checker
 class Board:
+    width: int
+    height: int
+    tile_width: int
+    tile_height: int
+    selected_piece: Piece | None
+    turn: Literal["white", "black"]
+    config: list[list[str]]
+    squares: list[Square]
+    last_captured: int
+    num_moves: int
+
     def __init__(self, width, height):
         self.width = width
         self.height = height
@@ -79,8 +93,6 @@ class Board:
                         square.occupying_piece = Star(
                             (x, y), "white" if piece[0] == "w" else "black", self
                         )
-
-
 
     def is_in_checkmate(self, color):
         output = False
@@ -162,5 +174,6 @@ class Board:
                 for move in square.occupying_piece.get_valid_moves(self):
                     output.append((square.pos, move.pos))
         return output
+
     def is_in_draw(self):
         return self.num_moves >= 100
