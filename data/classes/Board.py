@@ -43,19 +43,19 @@ class Board:
         self.num_moves = 0
         self.setup_board()
 
-    def generate_squares(self):
+    def generate_squares(self) -> list[Square]:
         output = []
         for y in range(6):
             for x in range(6):
                 output.append(Square(x, y, self.tile_width, self.tile_height))
         return output
 
-    def get_square_from_pos(self, pos):
+    def get_square_from_pos(self, pos) -> Square:
         for square in self.squares:
             if (square.x, square.y) == (pos[0], pos[1]):
                 return square
 
-    def get_piece_from_pos(self, pos):
+    def get_piece_from_pos(self, pos) -> Piece | None:
         return self.get_square_from_pos(pos).occupying_piece
 
     def setup_board(self):
@@ -94,7 +94,7 @@ class Board:
                             (x, y), "white" if piece[0] == "w" else "black", self
                         )
 
-    def is_in_checkmate(self, color):
+    def is_in_checkmate(self, color) -> str:
         output = False
         pieces_left = [
             i.occupying_piece.color + i.occupying_piece.notation
@@ -103,7 +103,7 @@ class Board:
         ]
         return color + "K" not in pieces_left
 
-    def is_in_check(self, color):
+    def is_in_check(self, color) -> bool:
         return False
 
     def handle_click(self, mx, my):
@@ -132,7 +132,7 @@ class Board:
         for square in self.squares:
             square.draw(display)
 
-    def get_board_state(self):
+    def get_board_state(self) -> list[list[str]]:
         # 2d 6x6 array
         output = [["" for _ in range(6)] for _ in range(6)]
 
@@ -145,7 +145,7 @@ class Board:
                 output[square.y][square.x] = ""
         return output
 
-    def handle_move(self, start_pos, end_pos):
+    def handle_move(self, start_pos, end_pos) -> bool:
         start_square = self.get_square_from_pos(start_pos)
         end_square = self.get_square_from_pos(end_pos)
 
@@ -161,10 +161,12 @@ class Board:
             self.num_moves += 1
             return True
 
-    def alg_not_to_pos(self, alg_not):
+    def alg_not_to_pos(self, alg_not) -> tuple[int, int]:
         return (ord(alg_not[0]) - 65, int(alg_not[1]) - 1)
 
-    def get_all_valid_moves(self, color):
+    def get_all_valid_moves(
+        self, color
+    ) -> list[tuple[tuple[int, int], tuple[int, int]]]:
         output = []
         for square in self.squares:
             if (
@@ -175,5 +177,5 @@ class Board:
                     output.append((square.pos, move.pos))
         return output
 
-    def is_in_draw(self):
+    def is_in_draw(self) -> bool:
         return self.num_moves >= 100

@@ -138,6 +138,18 @@ fn get_all_moves(side: &Side, board: &Board) -> Vec<(Position, Position)> {
         .collect()
 }
 
+/// unchecked
+fn apply_move(board: &Board, start: &Position, end: &Position) -> Board {
+    let mut new_board = board.clone();
+    new_board[end.0][end.1] = new_board[start.0][start.1];
+    new_board[start.0][start.1] = None;
+    new_board
+}
+
+fn evaluate_board(_side: &Side, _board: &Board) -> i32 {
+    0
+}
+
 /// Formats the sum of two numbers as string.
 #[pyfunction]
 fn perform_move(
@@ -151,9 +163,19 @@ fn perform_move(
     };
     let board = decode_board(&board);
     let moves = get_all_moves(&side, &board);
-    println!("moves: {:?}", moves);
-    let Some(&((sy, sx), (ey, ex))) = moves.get(0) else {
-        // return invalid move
+    let mut options = moves
+        .iter()
+        .map(|move_idea| {
+            (
+                move_idea,
+                evaluate_board(&side, &apply_move(&board, &move_idea.0, &move_idea.1)),
+            )
+        })
+        .collect::<Vec<_>>();
+    options.sort_by_key(|(_, score)| -*score);
+    println!("options: {:?}", options);
+    let Some((&((sy, sx), (ey, ex)), _)) = options.get(0) else {
+        // return invalid move so it becomes a random move
         println!("no available moves oof");
         return Ok(((0, 0), (1, 1)));
     };
