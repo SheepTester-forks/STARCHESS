@@ -5,6 +5,7 @@ enum Side {
     White,
     Black,
 }
+
 #[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
 enum Piece {
     Pawn,
@@ -16,7 +17,10 @@ enum Piece {
     Star,
     Joker,
 }
+
 type Board = Vec<Vec<Option<(Side, Piece)>>>;
+
+type Position = (usize, usize);
 
 fn decode_board(board: &[Vec<String>]) -> Board {
     board
@@ -55,15 +59,96 @@ fn decode_board(board: &[Vec<String>]) -> Board {
         .collect()
 }
 
+fn offset_maybe((br, bc): Position, (or, oc): (isize, isize)) -> Option<Position> {
+    match (br.checked_add_signed(or), bc.checked_add_signed(oc)) {
+        (Some(row), Some(column)) if row < 6 && column < 6 => Some((row, column)),
+        _ => None,
+    }
+}
+
+fn offset(base: Position, offset: (isize, isize)) -> (Position, Position) {
+    (base, offset_maybe(base, offset).unwrap_or((7, 7)))
+}
+
+fn get_all_moves(side: &Side, board: &Board) -> Vec<(Position, Position)> {
+    // Black moves +, white moves - row
+    board
+        .iter()
+        .enumerate()
+        .flat_map(|(r, row)| {
+            row.iter().enumerate().flat_map(move |(c, cell)| {
+                let Some(piece) = cell else {
+                    return vec![];
+                };
+                let from = (r, c);
+                match piece.1 {
+                    Piece::Pawn => vec![],
+                    Piece::Rook => vec![],
+                    Piece::Knight => vec![
+                        offset(from, (-1, -2)),
+                        offset(from, (-1, 2)),
+                        offset(from, (1, -2)),
+                        offset(from, (1, 2)),
+                        offset(from, (-2, -1)),
+                        offset(from, (-2, 1)),
+                        offset(from, (2, -1)),
+                        offset(from, (2, 1)),
+                    ],
+                    Piece::Bishop => vec![],
+                    Piece::Queen => vec![],
+                    Piece::King => vec![
+                        offset(from, (-1, -1)),
+                        offset(from, (0, -1)),
+                        offset(from, (1, -1)),
+                        offset(from, (-1, 0)),
+                        offset(from, (1, 0)),
+                        offset(from, (-1, 1)),
+                        offset(from, (0, 1)),
+                        offset(from, (1, 1)),
+                    ],
+                    Piece::Star => vec![
+                        offset(from, (-1, -1)),
+                        offset(from, (-1, 1)),
+                        offset(from, (1, -1)),
+                        offset(from, (1, 1)),
+                        offset(from, (0, -2)),
+                        offset(from, (0, 2)),
+                        offset(from, (-2, 0)),
+                        offset(from, (2, 0)),
+                    ],
+                    Piece::Joker => vec![],
+                }
+            })
+        })
+        .filter(|&(start, end): &(Position, Position)| {
+            if end.0 == 7 {
+                return false;
+            }
+            let start = board[start.0][start.1];
+            let end = board[end.0][end.1];
+            match (start, end) {
+                // Cannot eat your own piece
+                (Some((start_side, _)), Some((end_side, _))) => start_side != end_side,
+                _ => true,
+            }
+        })
+        .collect()
+}
+
 /// Formats the sum of two numbers as string.
 #[pyfunction]
 fn perform_move(
-    _side: String,
+    side: String,
     board: Vec<Vec<String>>,
 ) -> PyResult<((usize, usize), (usize, usize))> {
+    let side = match side.as_str() {
+        "black" => Side::Black,
+        "white" => Side::White,
+        _ => panic!("Unexpected side {}", side),
+    };
     let board = decode_board(&board);
     println!("board: {:?}", board);
-    Ok(((1, 2), (3, 4)))
+    Ok(get_all_moves(&side, &board)[0])
 }
 
 /// A Python module implemented in Rust.
