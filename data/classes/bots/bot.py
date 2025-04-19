@@ -3,7 +3,7 @@ import random
 
 class Bot:
     """
-    A bot that makes random moves.
+    A bot implemented in Rust.
     """
 
     def __init__(self):
