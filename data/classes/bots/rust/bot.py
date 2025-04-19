@@ -1,13 +1,15 @@
 import os
 import shutil
+import sys
 import time
 from typing import TYPE_CHECKING, Literal
 
+# TODO: inline file contents in bot.py
 shutil.copy(
     ".venv/lib/python3.12/site-packages/ai_chessbot/ai_chessbot.cpython-312-x86_64-linux-gnu.so",
     os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
-        "ai_chessbot.cpython-312-x86_64-linux-gnu.so",
+        f"ai_chessbot.cpython-{''.join(sys.version.split('.')[:2])}-x86_64-linux-gnu.so",
     ),
 )
 
