@@ -150,8 +150,13 @@ fn perform_move(
         _ => panic!("Unexpected side {}", side),
     };
     let board = decode_board(&board);
-    println!("board: {:?}", board);
-    let ((sy, sx), (ey, ex)) = get_all_moves(&side, &board)[0];
+    let moves = get_all_moves(&side, &board);
+    println!("moves: {:?}", moves);
+    let Some(&((sy, sx), (ey, ex))) = moves.get(0) else {
+        // return invalid move
+        println!("no available moves oof");
+        return Ok(((0, 0), (1, 1)));
+    };
     Ok(((sx, sy), (ex, ey)))
 }
 

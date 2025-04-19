@@ -1,22 +1,24 @@
 import importlib.machinery
 import os
-import shutil
 import time
 from typing import TYPE_CHECKING, Literal
 
+current_dir = os.path.dirname(os.path.abspath(__file__))
 so_path = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)),
+    current_dir,
     "ai_chessbot" + importlib.machinery.EXTENSION_SUFFIXES[0],
 )
-# TODO: inline file contents in bot.py
-shutil.copy(
-    ".venv/lib/python3.12/site-packages/ai_chessbot/ai_chessbot.cpython-312-x86_64-linux-gnu.so",
-    so_path,
-)
-# with open(so_path, "wb") as file:
-#     file.write(b"...")
+contents = b"..."
+if len(contents) > 10:
+    import sys
 
-from . import ai_chessbot
+    with open(so_path, "wb") as file:
+        file.write(contents)
+
+    if current_dir not in sys.path:
+        sys.path.insert(0, current_dir)
+
+import ai_chessbot
 
 print(ai_chessbot)
 

@@ -1,7 +1,7 @@
 import pygame
 
 from data.classes.Board import Board
-from data.classes.bots.random_bot import Bot as RandomBot
+from target.bot import Bot as RandomBot
 from data.classes.bots.minimax_bot import Bot as MinimaxBot
 
 pygame.init()
@@ -53,5 +53,3 @@ if __name__ == "__main__":
 
         # Draw the board
         draw(screen)
-    while True:
-        pass

@@ -1,16 +1,8 @@
 # Rust shit
 
 ```shell
-$ maturin develop
-```
-
-```py
-with open(
-    ".venv/lib/python3.12/site-packages/ai_chessbot/ai_chessbot.cpython-312-x86_64-linux-gnu.so",
-    "rb",
-) as file:
-    with open("wow.py", "w") as wf:
-        wf.write(repr(file.read()))
+$ maturin develop --release
+$ python make.py
 ```
 
 ---
