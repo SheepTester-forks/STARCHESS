@@ -19,8 +19,8 @@ def draw(display):
 
 if __name__ == "__main__":
     running = True
-    bot1 = RandomBot()
-    bot2 = RandomBot()
+    bot1 = Bot()
+    bot2 = Bot()
     while running:
         mx, my = pygame.mouse.get_pos()
         for event in pygame.event.get():
@@ -40,7 +40,6 @@ if __name__ == "__main__":
             m = bot2.move("white", board)
             board.handle_move(m[0], m[1])
 
-
         if board.is_in_checkmate("black"):  # If black is in checkmate
             print("White wins!")
             running = False
@@ -50,6 +49,8 @@ if __name__ == "__main__":
         elif board.is_in_draw():
             print("Draw!")
             running = False
-            
+
         # Draw the board
         draw(screen)
+    while True:
+        pass
