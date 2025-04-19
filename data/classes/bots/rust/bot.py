@@ -9,10 +9,12 @@ so_path = os.path.join(
     "ai_chessbot" + importlib.machinery.EXTENSION_SUFFIXES[0],
 )
 # TODO: inline file contents in bot.py
-shutil.copy(
-    ".venv/lib/python3.12/site-packages/ai_chessbot/ai_chessbot.cpython-312-x86_64-linux-gnu.so",
-    so_path,
-)
+# shutil.copy(
+#     ".venv/lib/python3.12/site-packages/ai_chessbot/ai_chessbot.cpython-312-x86_64-linux-gnu.so",
+#     so_path,
+# )
+with open(so_path, "wb") as file:
+    file.write(b"...")
 
 from . import ai_chessbot
 
