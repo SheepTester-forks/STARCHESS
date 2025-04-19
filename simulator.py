@@ -59,10 +59,24 @@ def run_game(bot1_class, bot2_class, delay):
 if __name__ == "__main__":
     print("Made it this far 2")
     parser = argparse.ArgumentParser()
-    parser.add_argument("--bot1", type=str, default="random_bot", help="Bot for black (e.g. 'random_bot')")
-    parser.add_argument("--bot2", type=str, default="random_bot", help="Bot for white (e.g. 'random_bot')")
-    parser.add_argument("--delay", type=int, default=0, help="Delay in ms between moves")
-    parser.add_argument("--simulations", type=int, default=1, help="Number of simulations to run")
+    parser.add_argument(
+        "--bot1",
+        type=str,
+        default="random_bot",
+        help="Bot for black (e.g. 'random_bot')",
+    )
+    parser.add_argument(
+        "--bot2",
+        type=str,
+        default="random_bot",
+        help="Bot for white (e.g. 'random_bot')",
+    )
+    parser.add_argument(
+        "--delay", type=int, default=0, help="Delay in ms between moves"
+    )
+    parser.add_argument(
+        "--simulations", type=int, default=1, help="Number of simulations to run"
+    )
     args = parser.parse_args()
 
     try:
@@ -102,7 +116,11 @@ if __name__ == "__main__":
                 else:
                     move = bot2.move("white", board)
 
-                board.handle_move(*move)
+                success = board.handle_move(*move)
+                if not success:
+                    print("invalid move. think about it...")
+                    while True:
+                        pass
                 pygame.time.delay(args.delay)
                 draw(screen, board)
 
@@ -127,6 +145,10 @@ if __name__ == "__main__":
 
     total = bot1_wins + bot2_wins + draws
     print(f"\n=== Simulation Results: {args.bot1} (Black) vs {args.bot2} (White) ===")
-    print(f"{args.bot1} (bot1/black) wins: {bot1_wins} ({(bot1_wins / total) * 100:.1f}%)")
-    print(f"{args.bot2} (bot2/white) wins: {bot2_wins} ({(bot2_wins / total) * 100:.1f}%)")
+    print(
+        f"{args.bot1} (bot1/black) wins: {bot1_wins} ({(bot1_wins / total) * 100:.1f}%)"
+    )
+    print(
+        f"{args.bot2} (bot2/white) wins: {bot2_wins} ({(bot2_wins / total) * 100:.1f}%)"
+    )
     print(f"Draws: {draws} ({(draws / total) * 100:.1f}%)")

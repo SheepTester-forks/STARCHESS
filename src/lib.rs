@@ -80,6 +80,9 @@ fn get_all_moves(side: &Side, board: &Board) -> Vec<(Position, Position)> {
                 let Some(piece) = cell else {
                     return vec![];
                 };
+                if piece.0 != *side {
+                    return vec![];
+                }
                 let from = (r, c);
                 match piece.1 {
                     Piece::Pawn => vec![],
@@ -148,7 +151,8 @@ fn perform_move(
     };
     let board = decode_board(&board);
     println!("board: {:?}", board);
-    Ok(get_all_moves(&side, &board)[0])
+    let ((sy, sx), (ey, ex)) = get_all_moves(&side, &board)[0];
+    Ok(((sx, sy), (ex, ey)))
 }
 
 /// A Python module implemented in Rust.
