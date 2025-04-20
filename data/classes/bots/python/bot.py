@@ -85,7 +85,15 @@ class Bot:
         start_time = time.perf_counter()
         try:
             # optimized version
-            board.get_square_from_pos = lambda pos: board._square_map[pos]
+            orig_meth = type(board).get_square_from_pos
+            # board.get_square_from_pos = types.MethodType(
+            #     (lambda self, pos: self._square_map[pos]), board
+            # )
+            type(board).get_square_from_pos = lambda self, pos: (
+                self._square_map[pos]
+                if hasattr(self, "_square_map")
+                else orig_meth(self, pos)
+            )
             self._set_board_squares(board, board.squares)
 
             moves = board.get_all_valid_moves(side)
@@ -141,6 +149,7 @@ class Bot:
                         worst_poss_score = score
                 scores.append((start, end, worst_poss_score))
             self._set_board_squares(board, orig_squares)
+            # board.get_square_from_pos = orig_meth
             # highest score first
             scores.sort(key=lambda entry: -entry[2])
             print(scores)
