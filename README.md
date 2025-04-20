@@ -23,6 +23,10 @@ $ maturin develop --release
 $ python make.py
 ```
 
+worked on my machine but not Steven's 😔
+
+turns out my method (`python.bot`) was fast enough in Python anyways
+
 ---
 
 # StarChess.AI 2025
