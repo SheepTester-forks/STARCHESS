@@ -1,3 +1,4 @@
+import math
 import random
 import time
 from typing import TYPE_CHECKING, Literal
@@ -23,6 +24,10 @@ class FakeSquare:
         self.y = y
         self.occupying_piece = occupying_piece
 
+    @property
+    def pos(self) -> tuple[int, int]:
+        return self.x, self.y
+
 
 class Bot:
     """
@@ -44,16 +49,24 @@ class Bot:
             "Q": 9,
             "K": 100,
             "S": 5,
-            "J": 7,
+            "J": 7,  # it's not *as* good as a queen i think
         }
         for _, end_pos in board.get_all_valid_moves(side):
             victim = board.get_square_from_pos(end_pos)
             if victim.occupying_piece:
                 assert victim.occupying_piece.color != side
-                score += piece_scores[square.occupying_piece.notation] * 10
+                piece_score = piece_scores[square.occupying_piece.notation]
+                if square.occupying_piece.notation == " ":
+                    # this is KILLING an enemy pawn
+                    # for black it starts at y=2 and goes up to y=5 (so from scores 1 to 4)
+                    piece_score = square.y - 1 if side == "black" else 5 - square.y
+                score += piece_score * 10
         for square in board.squares:
             if square.occupying_piece:
-                score += piece_scores[square.occupying_piece.notation] * (
+                piece_score = piece_scores[square.occupying_piece.notation]
+                if square.occupying_piece.notation == " ":
+                    piece_score = square.y - 1 if side == "black" else 5 - square.y
+                score += piece_score * (
                     1 if square.occupying_piece.color == side else -1
                 )
         return score
@@ -81,7 +94,23 @@ class Bot:
                 end_square = board.get_square_from_pos(end)
                 end_square.occupying_piece = start_square.occupying_piece
                 start_square.occupying_piece = None
-                scores.append((start, end, self._eval_board(board)))
+                after_one_turn = board.squares
+                worst_poss_score = math.inf
+                for opponent_move in board.get_all_valid_moves(
+                    "white" if side == "black" else "black"
+                ):
+                    board.squares = [
+                        FakeSquare(square.x, square.y, square.occupying_piece)
+                        for square in after_one_turn
+                    ]
+                    start_square = board.get_square_from_pos(opponent_move[0])
+                    end_square = board.get_square_from_pos(opponent_move[1])
+                    end_square.occupying_piece = start_square.occupying_piece
+                    start_square.occupying_piece = None
+                    score = self._eval_board(board)
+                    if score < worst_poss_score:
+                        worst_poss_score = score
+                scores.append((start, end, worst_poss_score))
             board.squares = orig_squares
             # highest score first
             scores.sort(key=lambda entry: -entry[2])

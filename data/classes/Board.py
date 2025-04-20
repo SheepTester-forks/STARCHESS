@@ -157,7 +157,7 @@ class Board:
 
         if start_square.occupying_piece.move(self, end_square):
             self.turn = "white" if self.turn == "black" else "black"
-            print(self.get_board_state())
+            # print(self.get_board_state())
             self.num_moves += 1
             return True
 
