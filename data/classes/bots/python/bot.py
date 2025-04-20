@@ -39,7 +39,7 @@ class Bot:
 
     # TODO: optmize board.get_square_from_pos(start)
 
-    def _eval_board(side: Literal["black", "white"], board: "Board") -> float:
+    def _eval_board(self, side: Literal["black", "white"], board: "Board") -> float:
         score = 0
         piece_scores = {
             " ": 1,
@@ -52,9 +52,10 @@ class Bot:
             "J": 7,  # it's not *as* good as a queen i think
         }
         for _, end_pos in board.get_all_valid_moves(side):
-            victim = board.get_square_from_pos(end_pos)
-            if victim.occupying_piece:
-                assert victim.occupying_piece.color != side
+            # victim
+            square = board.get_square_from_pos(end_pos)
+            if square.occupying_piece:
+                assert square.occupying_piece.color != side
                 piece_score = piece_scores[square.occupying_piece.notation]
                 if square.occupying_piece.notation == " ":
                     # this is KILLING an enemy pawn
@@ -92,6 +93,12 @@ class Bot:
                 ]
                 start_square = board.get_square_from_pos(start)
                 end_square = board.get_square_from_pos(end)
+                if end_square.occupying_piece:
+                    assert end_square.occupying_piece.color != side
+                    if end_square.occupying_piece.notation == "K":
+                        # that's GOOD
+                        scores.append((start, end, math.inf))
+                        break
                 end_square.occupying_piece = start_square.occupying_piece
                 start_square.occupying_piece = None
                 after_one_turn = board.squares
@@ -105,9 +112,15 @@ class Bot:
                     ]
                     start_square = board.get_square_from_pos(opponent_move[0])
                     end_square = board.get_square_from_pos(opponent_move[1])
+                    if end_square.occupying_piece:
+                        assert end_square.occupying_piece.color == side
+                        if end_square.occupying_piece.notation == "K":
+                            # that's bad
+                            worst_poss_score = -math.inf
+                            break
                     end_square.occupying_piece = start_square.occupying_piece
                     start_square.occupying_piece = None
-                    score = self._eval_board(board)
+                    score = self._eval_board(side, board)
                     if score < worst_poss_score:
                         worst_poss_score = score
                 scores.append((start, end, worst_poss_score))
