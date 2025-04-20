@@ -1,3 +1,15 @@
+Nick method: 
+
+> hide shut up shut up shut up shut up shut up shut up over here okay so basically what I did was I used very stock fish fairy stock fish furry it's not very like fairy tale fairy as in ferry okay good so what we do is we have the executable as a string inside of the python file and then when we run the program we write the executable file for fairy stockfish wait okay continue please okay write the file for fairy stockfish to the file system then we run it as a subprocess and we also have a variance.ini file that runs well that has the rules for star chest and then star chest so then afterwards it queries the stockfish fairy stockfish runner and gets the next best move that takes 0.93.0 like less than one like like 90 milliseconds right then then after it does that it returns the move so it would have beaten all of your bots except for the fact that they disallowed pee open from sub-processor but so I tried to investigate it by hiding it in the middle of the binary like splitting the string in half and adding import statements in the middle and also making sure that the strings sub-process never went in there and actually did adhere to the rules I didn't import sub-process I am ported cis which allows you to access sub-process through so using
+
+Sean's method: 
+
+> for every possible move, get the worst possible board score across the opponent's possible subsequent moves. select my move with the best score
+>
+> what's the score? add points for each of my pieces remaining on the board, subtract points for the opponent's pieces. pieces have different point values; pawns are worth more as they get to the end
+>
+> also, for good measure, it deletes the opponent's king from the board
+
 # Rust shit
 
 ```shell
