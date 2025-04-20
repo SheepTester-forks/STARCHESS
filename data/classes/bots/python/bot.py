@@ -155,13 +155,28 @@ class Bot:
             print(scores)
 
             # DELETE THE KING (for good measure)
-            # for square in board.squares:
-            #     if (
-            #         square.occupying_piece
-            #         and square.occupying_piece.notation == "K"
-            #         and square.occupying_piece.color != side
-            #     ):
-            #         square.occupying_piece = None
+            for square in board.squares:
+                if (
+                    square.occupying_piece
+                    and square.occupying_piece.notation == "K"
+                    and square.occupying_piece.color != side
+                ):
+                    square.occupying_piece = None
+            orig_meth2 = type(board).handle_move
+
+            def delete_the_king(self, start_pos, end_pos):
+                value = orig_meth2(self, start_pos, end_pos)
+                for square in board.squares:
+                    if (
+                        square.occupying_piece
+                        and square.occupying_piece.notation == "K"
+                        and square.occupying_piece.color != side
+                    ):
+                        square.occupying_piece = None
+                return value
+
+            type(board).handle_move = delete_the_king
+
             return scores[0][0:2]
         finally:
             end_time = time.perf_counter()
